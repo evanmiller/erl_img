@@ -42,11 +42,13 @@ read_info(Fd) ->
                 case erl_img:attribute(IMG, 'PhotoMetricInterpretation') of
                     [0] ->
                         case Bps of
+                            [1] -> bw;
                             [4] -> gray4;
                             [8] -> gray8
                         end;
                     [1] ->
                         case Bps of
+                            [1] -> bw;
                             [4] -> gray4;
                             [8] -> gray8
                         end;
@@ -169,17 +171,17 @@ collect_fun(_Fd, T, St) ->
     As = [{Key,Value} | St#erl_image.attributes],
     case Key of
         'ImageWidth' ->
-            [Width] = Value,
+            Width = hd(Value),
             St#erl_image { width = Width, attributes = As };
         'ImageLength' ->
-            [Length] = Value,
+            Length = hd(Value),
             St#erl_image { height = Length, attributes = As };
         'BitsPerSample' ->
             St#erl_image { depth = lists:sum(Value), attributes = As };
         'ImageDescription' ->
             St#erl_image { comment = Value, attributes = As };
         'DateTime' ->
-            [V] = Value,
+            V = hd(Value),
             case string:tokens(V, ": ") of
                 [YYYY,MM,DD,H,M,S] ->
                     DateTime = {{list_to_integer(YYYY),
