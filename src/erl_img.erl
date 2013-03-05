@@ -114,9 +114,13 @@ read_file_info(File) ->
         Error  -> Error
     end.
 
-
+load(Binary) when is_binary(Binary) ->
+	load_opt(Binary, [ram, binary, read]);
 load(File) ->
-    case file:open(File, [raw, binary, read]) of
+	load_opt(File, [raw, binary, read]).
+
+load_opt(File, Opts) ->
+    case file:open(File, Opts) of
         {ok,Fd} ->
             Res = case read_magic_info(Fd) of
                       {ok, IMG} ->
@@ -155,9 +159,6 @@ to_binary(IMG) ->
         Error ->
             Error
     end.
-
-
-
 
 read_info(Type, Fd) ->
     file:position(Fd, 0),
