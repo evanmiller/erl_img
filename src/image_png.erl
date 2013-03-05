@@ -52,8 +52,9 @@ scan_info(Fd, IMG, First) ->
     case read_chunk_hdr(Fd) of
         {ok, Length, Type} ->
             Z = zlib:open(),
-            scan_info(Fd, IMG, First, Type, Length, Z),
-            zlib:close(Z);
+            Res = scan_info(Fd, IMG, First, Type, Length, Z),
+            zlib:close(Z),
+			Res;
         Error ->
             Error
     end.
